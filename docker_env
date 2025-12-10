@@ -1,3 +1,3 @@
-DEFAULT_EMAIL=epalomeque@gmail.com
-VIRTUAL_HOST=lets.mlkhost.com
-LETSENCRYPT_HOST=lets.mlkhost.com
+LETSENCRYPT_EMAIL=epalomeque@gmail.com
+# VIRTUAL_HOST=lets.mlkhost.com
+# LETSENCRYPT_HOST=lets.mlkhost.com
