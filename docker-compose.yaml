@@ -10,6 +10,8 @@ services:
             - "certs:/etc/nginx/certs"
             - "/run/docker.sock:/tmp/docker.sock:ro"
         restart: "always"
+        env_file:
+            - docker_env
         networks: 
             - "mlknet"
         ports:
@@ -26,10 +28,9 @@ services:
             - "vhost:/etc/nginx/vhost.d"
             - "certs:/etc/nginx/certs"
             - "/run/docker.sock:/var/run/docker.sock:ro"
-        env_file:
-            - docker_env
         environment:
             NGINX_PROXY_CONTAINER: "reverse-proxy"
+            DEFAULT_EMAIL: "epalomeque@gmail.com"
         restart: "always"
         depends_on:
             - "reverse-proxy"
