@@ -1,49 +1,28 @@
 services:
 
     reverse-proxy:
-        image: "jwilder/nginx-proxy:latest"
-        container_name: "reverse-proxy"
+        image: 'jc21/nginx-proxy-manager:latest'
+        container_name: "nginx-proxy-manager"
         volumes:
-            - "html:/usr/share/nginx/html"
-            - "dhparam:/etc/nginx/dhparam"
-            - "vhost:/etc/nginx/vhost.d"
-            - "certs:/etc/nginx/certs"
-            - "/run/docker.sock:/tmp/docker.sock:ro"
-        restart: "always"
+            - "./data:/data"
+            - "./letsencrypt:/etc/letsencrypt"
+        restart: "unless-stopped"
         env_file:
             - docker_env
+        environment:
+            DB_SQLITE_FILE: "/data/database.sqlite"
+            DISABLE_IPV6: 'true'  # Opcional: deshabilitar IPv6
         networks: 
             - "mlknet"
         ports:
             - "80:80"
             - "443:443"
-
-    letsencrypt:
-        image: "jrcs/letsencrypt-nginx-proxy-companion:latest"
-        container_name: "letsencrypt-helper"
-        env_file:
-            - docker_env
-        volumes:
-            - "html:/usr/share/nginx/html"
-            - "dhparam:/etc/nginx/dhparam"
-            - "vhost:/etc/nginx/vhost.d"
-            - "certs:/etc/nginx/certs"
-            - "/run/docker.sock:/var/run/docker.sock:ro"
-        environment:
-            NGINX_PROXY_CONTAINER: "reverse-proxy"
-            DEFAULT_EMAIL: $LETSENCRYPT_EMAIL
-        restart: "always"
-        depends_on:
-            - "reverse-proxy"
-        networks: 
-            - "mlknet"
-
-volumes:
-    certs:
-    html:
-    vhost:
-    dhparam:
-
+            - "8081:81"
+        healthcheck:
+            test: ["CMD", "/bin/check-health"]
+            interval: 10s
+            timeout: 3s
+ 
 networks:
     mlknet:
         external: true
